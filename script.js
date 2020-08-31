@@ -8,12 +8,12 @@ const keys = [];
 var monitorImage = undefined; //index of image from xrayImages array to display on the monitor
 
 const background = new Image ();
-background.src = "assets/background.png";
+background.src = "background.png";
 
 
 const xrayImages = [];
 const chestGood = new Image ();
-chestGood.src = "assets/chestok.png";
+chestGood.src = "chestok.png";
 xrayImages.push(chestGood);
 
 /*const gameSounds = [];
