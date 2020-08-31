@@ -4,6 +4,7 @@ canvas.width = 800; //declares variables which let the script know what the html
 canvas.height = 500;
 
 var continueAnimating = true;
+var roll = false;
 const keys = [];
 var monitorImage = undefined; //index of image from xrayImages array to display on the monitor
 
@@ -14,7 +15,13 @@ background.src = "background.png";
 const xrayImages = [];
 const chestGood = new Image ();
 chestGood.src = "chestok.png";
-xrayImages.push(chestGood);
+const chestBad1 = new Image ();
+chestBad1.src = "chestbad1.png";
+const chestBad2 = new Image ();
+chestBad2.src = "chestbad2.png";
+const chestBad3 = new Image ();
+chestBad3.src = "chestbad3.png";
+xrayImages.push(chestGood, chestBad1, chestBad2, chestBad3);
 
 /*const gameSounds = [];
 const roar = new Audio ();
@@ -26,9 +33,12 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
 }
 
 function rollImage(){
-  let num = floor(Math.random() * (xrayImages.length - 0) + 0);
-  ctx.drawImage(xrayImages[num], 100, 75);
+  let num = Math.floor(Math.random() * (xrayImages.length - 0) + 0);
+  if (roll) ctx.drawImage(xrayImages[num], 100, 75);
+  roll = false;
 }
+
+
 
 /*const player = {
   x: 200,
@@ -107,6 +117,10 @@ window.addEventListener("keyup", function (e){
   delete keys[e.keyCode]; //when a key is released that key is deleted from the keys array.  This method prevents event listeners from interfering with one another and makes control more responsive.
 });
 
+function keyPressHandler(){
+  if (keys[32]) roll = true;
+}
+
 let fps, fpsInterval, startTime, now, then, elapsed; //declare empty variables
 
 function startAnimating(fps){ //function needed to kick off the animation by getting system time and tying fps to system time.
@@ -126,6 +140,8 @@ function animate(){
       ctx.clearRect (0, 0, canvas.width, canvas.height);
       ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
       
+      keyPressHandler();
+      
     //by giving requestAnimationFrame the name of it's parent function as a parameter it will run
     //repeatedly until infinity.  The function needs to be called once outside of itself to initialise.
 
@@ -135,7 +151,7 @@ function animate(){
       alert (`Your final score is ${finalScore}\n\nPress F5 to restart!`)
 
     }*/
-    //console.log(player.moving);
+    console.log(xrayImages.length);
     }
   }
 }
