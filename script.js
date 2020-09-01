@@ -6,25 +6,57 @@ canvas.height = 500;
 var continueAnimating = true;
 var roll = false;
 const keys = [];
-var monitorImage = undefined; //index of image from xrayImages array to display on the monitor
+const displayedImage = [];
+var score = 0;
 
 const background = new Image ();
 background.src = "background.png";
 
-
+//images library
 const xrayImages = [];
+
 const chestGood = new Image ();
 chestGood.src = "chestok.png";
+const footGood = new Image ();
+footGood.src = "footgood.png";
+const kneeGood = new Image ();
+kneeGood.src = "kneegood.png";
+const pelvisGood1 = new Image ();
+pelvisGood1.src = "pelvisgood1.png";
+const pelvisGood2 = new Image ();
+pelvisGood2.src = "pelvisgood2.png";
+const wristGood = new Image ();
+wristGood.src = "wristgood.png";
+xrayImages.push(chestGood, footGood, kneeGood, pelvisGood1, pelvisGood2, wristGood)
+
 const chestBad1 = new Image ();
 chestBad1.src = "chestbad1.png";
 const chestBad2 = new Image ();
 chestBad2.src = "chestbad2.png";
 const chestBad3 = new Image ();
 chestBad3.src = "chestbad3.png";
-xrayImages.push(chestGood, chestBad1, chestBad2, chestBad3);
+const detector = new Image ();
+detector.src = "detector.png";
+const footBad1 = new Image ();
+footBad1.src = "footbad1.png";
+const footBad2 = new Image ();
+footBad2.src = "footbad2.png";
+const kneeBad = new Image ();
+kneeBad.src = "kneebad.png";
+const pelvisBad1 = new Image ();
+pelvisBad1.src = "pelvisbad1.png";
+const wristBad1 = new Image ();
+wristBad1.src = "wristbad1.png";
+const wristBad2 = new Image ();
+wristBad2.src = "wristbad2.png";
+xrayImages.push(chestBad1, chestBad2, chestBad3, detector, footBad1, footBad2, kneeBad, pelvisBad1, wristBad1, wristBad2);
 
+function scoring (){
+  if (roll) score++;
+}
 /*const gameSounds = [];
 const roar = new Audio ();
+
 roar.src = "roar.mp3";
 gameSounds.push();*/
 
@@ -34,80 +66,14 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
 
 function rollImage(){
   let num = Math.floor(Math.random() * (xrayImages.length - 0) + 0);
-  if (roll) ctx.drawImage(xrayImages[num], 100, 75);
+  displayedImage.push(xrayImages[num]);
+  //ctx.drawImage(xrayImages[num], 100, 75);
   roll = false;
 }
 
-
-
-/*const player = {
-  x: 200,
-  y: 200,
-  width: 40,
-  height: 72,
-  frameX: 0,
-  frameY: 3,
-  speed: 9, 
-  moving: false,
-  shooting: false,
-};*/
-
-/*class Bolt { //for player bolts, push to bolts array
-  constructor(){
-    this.x = player.x+(player.width/2); //start these at null, coords for testing only
-    this.y = player.y+(player.height/2);
-    this.dx = 0;
-    this.dy = 0;
-    this.radius = 5; 
-    this.speed = 20; //taken from blast bolt speed
-    this.hit = false; //change to true on collision for effects, (shape change for bolts)
-  }
-  draw(){
-      ctx.beginPath();
-      ctx.arc (this.x, this.y, this.radius, 0, 2 * Math.PI);
-      ctx.fillStyle = "green";
-      ctx.fill();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.arc (this.x, this.y, this.radius*0.75, 0, 2 * Math.PI);
-      ctx.fillStyle = "lightgreen";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc (this.x, this.y, this.radius*0.5, 0, 2 * Math.PI);
-      ctx.fillStyle = "gold";
-      ctx.fill();
-  }     
-  update(){
-    //bolt movement
-    this.x += this.dx;
-    this.y += this.dy;   
-    
-    if (this.dy === 0) {
-      if (player.frameY === 3) this.dy = -this.speed;//up
-      if (player.frameY === 0) this.dy = this.speed;//down
-    }
-    if (this.dx === 0) {
-      if (player.frameY === 1) this.dx = -this.speed;//left
-      if (player.frameY === 2) this.dx = this.speed;//right
-    }
-  }
-
-
-  remove(){
-    let i = bolts.indexOf(this);
-    if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) {
-      bolts.splice(i, 1);
-      player.shooting = false;
-    }    
-  }
+function displayImage(){
+  ctx.drawImage(displayedImage[displayedImage.length-1], 100, 75);
 }
-*/
-
-/*drawScore = function() {
-  ctx.font = "normal bolder 16px verdana";
-  ctx.fillStyle = "rgb(0, 0, 0)";
-  ctx.fillText ("Total score: "+finalScore, canvas.width-210, 80);
-}*/
 
 window.addEventListener("keydown", function (e){
   keys[e.keyCode] = true;//when a key is pressed that key is added to the keys array
@@ -118,7 +84,7 @@ window.addEventListener("keyup", function (e){
 });
 
 function keyPressHandler(){
-  if (keys[32]) roll = true;
+  if (keys[32]/*space*/) roll = true;
 }
 
 let fps, fpsInterval, startTime, now, then, elapsed; //declare empty variables
@@ -139,8 +105,10 @@ function animate(){
       then = now - (elapsed % fpsInterval); //resets the clock to keep frame rate consistent
       ctx.clearRect (0, 0, canvas.width, canvas.height);
       ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-      
-      keyPressHandler();
+
+      keyPressHandler();      
+      if (roll) rollImage();
+      displayImage();
       
     //by giving requestAnimationFrame the name of it's parent function as a parameter it will run
     //repeatedly until infinity.  The function needs to be called once outside of itself to initialise.
@@ -151,9 +119,9 @@ function animate(){
       alert (`Your final score is ${finalScore}\n\nPress F5 to restart!`)
 
     }*/
-    console.log(xrayImages.length);
+    console.log(displayedImage.length);
     }
   }
 }
 
-if (continueAnimating) startAnimating(15);
+if (continueAnimating) startAnimating(8);
