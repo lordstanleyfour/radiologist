@@ -6,7 +6,6 @@ canvas.height = 500;
 var continueAnimating = true;
 var roll = false;
 const keys = [];
-const displayedImage = [];
 var score = 0;
 
 const background = new Image ();
@@ -51,8 +50,16 @@ const wristBad2 = new Image ();
 wristBad2.src = "wristbad2.png";
 xrayImages.push(chestBad1, chestBad2, chestBad3, detector, footBad1, footBad2, kneeBad, pelvisBad1, wristBad1, wristBad2);
 
+const displayedImage = [chestGood];
+var imagePrime = chestGood; //create a starting image to call here
+var imageCheck = null;
+
 function scoring (){
   if (roll) score++;
+  ctx.font = "normal bolder 32px impact";
+  ctx.fillStyle = "rgb(3, 53, 252)";
+  ctx.fillText ("S C O R E :      "+score, canvas.width-210, 50);
+  //if statements for checking keypress against list of images which match key conditions
 }
 /*const gameSounds = [];
 const roar = new Audio ();
@@ -66,9 +73,12 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
 
 function rollImage(){
   let num = Math.floor(Math.random() * (xrayImages.length - 0) + 0);
-  displayedImage.push(xrayImages[num]);
-  //ctx.drawImage(xrayImages[num], 100, 75);
-  roll = false;
+  imageCheck = xrayImages[num];
+  if (imageCheck !== imagePrime){
+    imagePrime = imageCheck
+    displayedImage.push(imagePrime);
+    roll = false;
+  }
 }
 
 function displayImage(){
@@ -84,7 +94,25 @@ window.addEventListener("keyup", function (e){
 });
 
 function keyPressHandler(){
-  if (keys[32]/*space*/) roll = true;
+  if (keys[32]/*space*/) roll = true; //for testing only
+  if (keys[65]/*A*/) {
+    if (imagePrime === chestGood || imagePrime === footGood || imagePrime === kneeGood || imagePrime === pelvisGood1 || imagePrime === pelvisGood2 || imagePrime === wristGood) {
+      score += 2;
+      roll = true;
+    } else {
+      score -= 3;
+      roll = true;
+    }
+  }
+  if (keys[68]/*D*/) {
+    if (imagePrime === chestBad1 || imagePrime === chestBad2 || imagePrime === chestBad3 || imagePrime === detector || imagePrime === footBad1 || imagePrime === footBad2 || imagePrime === kneeBad || imagePrime === pelvisBad1 || imagePrime === wristBad1 || imagePrime === wristBad2) {
+      score +=2;
+      roll = true;
+    } else {
+      score -=3;
+      roll = true;
+    }
+  }
 }
 
 let fps, fpsInterval, startTime, now, then, elapsed; //declare empty variables
@@ -109,19 +137,24 @@ function animate(){
       keyPressHandler();      
       if (roll) rollImage();
       displayImage();
-      
-    //by giving requestAnimationFrame the name of it's parent function as a parameter it will run
-    //repeatedly until infinity.  The function needs to be called once outside of itself to initialise.
-
+      scoring();
     /*drawScore();
-    if () {
+    if (frameCounter > 80) {
       continueAnimating = false;
       alert (`Your final score is ${finalScore}\n\nPress F5 to restart!`)
 
     }*/
-    console.log(displayedImage.length);
+    console.log(imageCheck);
     }
   }
 }
 
 if (continueAnimating) startAnimating(8);
+
+// framecounter, maybe in animation loop, to limit time and end the game, only runs when displayed image is not starting image
+//make if statements to check keypress against list of approved images for that keypress
+//add duplicate images for wrong side imaged
+//referral body part text - will this work with a huge list of if statements?
+//referral text to appear at 185,420 ? translate to tilt it along the paper?
+//? animate radiologists mouth with a sprite, maybe with rediculously pouty lips like the rocky horror picture show
+//
